@@ -2,7 +2,6 @@
 
 namespace Ifds\TenantGuard\Tests\Feature;
 
-use Illuminate\Support\Facades\Artisan;
 use Ifds\TenantGuard\Tests\TestCase;
 
 /**
@@ -37,11 +36,7 @@ class AuditCommandTest extends TestCase
 
     protected function auditJson(array $options = []): array
     {
-        // Artisan::call() buffers the output where Artisan::output() can read
-        // it; $this->artisan() keeps it inside the PendingCommand instead.
-        Artisan::call('tenant-guard:audit', $options + ['--json' => true]);
-
-        return json_decode(Artisan::output(), true) ?? [];
+        return $this->artisanJson('tenant-guard:audit', $options + ['--json' => true]);
     }
 
     public function test_it_reports_a_table_with_a_tenant_column_and_no_guarded_model(): void

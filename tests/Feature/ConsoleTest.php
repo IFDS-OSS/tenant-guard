@@ -24,22 +24,20 @@ class ConsoleTest extends TestCase
 
     public function test_run_executes_a_command_inside_one_tenant(): void
     {
-        Artisan::call('tenant-guard:run', [
+        $output = $this->artisanOutput('tenant-guard:run', [
             'cmd' => 'workbench:count-posts',
             '--tenant' => ['acme'],
         ]);
 
-        $this->assertStringContainsString("{$this->acme->id}:2", Artisan::output());
+        $this->assertStringContainsString("{$this->acme->id}:2", $output);
     }
 
     public function test_run_executes_a_command_for_every_tenant(): void
     {
-        Artisan::call('tenant-guard:run', [
+        $output = $this->artisanOutput('tenant-guard:run', [
             'cmd' => 'workbench:count-posts',
             '--all' => true,
         ]);
-
-        $output = Artisan::output();
 
         $this->assertStringContainsString("{$this->acme->id}:2", $output);
         $this->assertStringContainsString("{$this->globex->id}:5", $output);
@@ -100,9 +98,7 @@ class ConsoleTest extends TestCase
 
     public function test_the_list_command_can_emit_json(): void
     {
-        Artisan::call('tenant-guard:list', ['--json' => true]);
-
-        $rows = json_decode(Artisan::output(), true);
+        $rows = $this->artisanJson('tenant-guard:list', ['--json' => true]);
 
         $this->assertCount(2, $rows);
         $this->assertEqualsCanonicalizing(['acme', 'globex'], array_column($rows, 'slug'));

@@ -3,11 +3,13 @@
 namespace Ifds\TenantGuard\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 use Ifds\TenantGuard\Contracts\TenantContext;
 use Ifds\TenantGuard\Sql\TenantTableRegistry;
 use Ifds\TenantGuard\Testing\InteractsWithTenancy;
 use Orchestra\Testbench\Concerns\WithWorkbench;
 use Orchestra\Testbench\TestCase as BaseTestCase;
+use Symfony\Component\Console\Output\BufferedOutput;
 use Workbench\App\Models\Comment;
 use Workbench\App\Models\Post;
 use Workbench\App\Models\Tenant;
@@ -76,6 +78,32 @@ abstract class TestCase extends BaseTestCase
         $app['config']->set('tenant-guard.sentinel.mode', 'off');
         $app['config']->set('tenant-guard.cache.enabled', false);
         $app['config']->set('tenant-guard.resolution.central_domains', ['example.test']);
+    }
+
+    /**
+     * Run an artisan command and return exactly what it printed.
+     *
+     * `Artisan::output()` reads back through the console kernel's own last
+     * buffer, which has proven unreliable across Laravel/Testbench version
+     * combinations (empty even though the command itself ran and produced
+     * output on a real CLI). Passing our own buffer as the third argument to
+     * `Artisan::call()` sidesteps that entirely and is stable Laravel 10-13.
+     */
+    protected function artisanOutput(string $command, array $parameters = []): string
+    {
+        $output = new BufferedOutput;
+
+        Artisan::call($command, $parameters, $output);
+
+        return $output->fetch();
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function artisanJson(string $command, array $parameters = []): array
+    {
+        return json_decode($this->artisanOutput($command, $parameters), true) ?? [];
     }
 
     /**
