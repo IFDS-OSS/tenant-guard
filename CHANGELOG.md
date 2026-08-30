@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `ifds/tenant-guard` are documented here.
+All notable changes to `ifds-oss/tenant-guard` are documented here.
 
 ## 1.0.0
 
