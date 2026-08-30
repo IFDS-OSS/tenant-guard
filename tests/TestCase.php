@@ -2,6 +2,7 @@
 
 namespace Ifds\TenantGuard\Tests;
 
+use Illuminate\Console\OutputStyle;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Ifds\TenantGuard\Contracts\TenantContext;
@@ -85,12 +86,20 @@ abstract class TestCase extends BaseTestCase
      *
      * `Artisan::output()` reads back through the console kernel's own last
      * buffer, which has proven unreliable across Laravel/Testbench version
-     * combinations (empty even though the command itself ran and produced
-     * output on a real CLI). Passing our own buffer as the third argument to
-     * `Artisan::call()` sidesteps that entirely and is stable Laravel 10-13.
+     * combinations. The deeper cause: `Command::run()` builds its OutputStyle
+     * via `$container->make(OutputStyle::class, ['output' => $output])`, and
+     * the container returns a cached *instance* binding as-is - ignoring the
+     * override - once one exists. `RefreshDatabase`'s own internal
+     * `$this->artisan('migrate', ...)` call leaves exactly such an instance
+     * bound (wrapping *its* mocked output), so every command run afterwards
+     * silently writes into that stale mock instead of whatever output we
+     * explicitly pass in. Clearing the binding first forces a fresh one built
+     * from our buffer. Harmless no-op when nothing is bound.
      */
     protected function artisanOutput(string $command, array $parameters = []): string
     {
+        $this->app->offsetUnset(OutputStyle::class);
+
         $output = new BufferedOutput;
 
         Artisan::call($command, $parameters, $output);
