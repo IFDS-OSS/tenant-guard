@@ -1,5 +1,5 @@
 {
-    "name": "IFDS-OSS/tenant-guard",
+    "name": "ifds-oss/tenant-guard",
     "description": "Defence-in-depth multi-tenancy for Laravel applications that share a single database and schema.",
     "keywords": [
         "laravel",
