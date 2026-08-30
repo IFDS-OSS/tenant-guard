@@ -2,9 +2,11 @@
 
 **Defence-in-depth multi-tenancy for Laravel applications that share one database and one schema.**
 
+[![Tests](https://github.com/IFDS-OSS/tenant-guard/actions/workflows/tests.yml/badge.svg)](https://github.com/IFDS-OSS/tenant-guard/actions/workflows/tests.yml)
+[![Latest Version](https://img.shields.io/packagist/v/ifds/tenant-guard.svg?style=flat-square)](https://packagist.org/packages/ifds/tenant-guard)
+[![Total Downloads](https://img.shields.io/packagist/dt/ifds/tenant-guard.svg?style=flat-square)](https://packagist.org/packages/ifds/tenant-guard)
 [![Laravel 10 · 11 · 12 · 13](https://img.shields.io/badge/Laravel-10%20%C2%B7%2011%20%C2%B7%2012%20%C2%B7%2013-FF2D20?style=flat-square)](https://laravel.com)
 [![PHP 8.2+](https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=flat-square)](https://php.net)
-[![Tests 220](https://img.shields.io/badge/tests-220%20passing-success?style=flat-square)](#testing)
 [![License MIT](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE.md)
 
 ---

@@ -11,6 +11,11 @@
     ],
     "license": "MIT",
     "type": "library",
+    "homepage": "https://github.com/IFDS-OSS/tenant-guard",
+    "support": {
+        "issues": "https://github.com/IFDS-OSS/tenant-guard/issues",
+        "source": "https://github.com/IFDS-OSS/tenant-guard"
+    },
     "authors": [
         {
             "name": "ifds",
