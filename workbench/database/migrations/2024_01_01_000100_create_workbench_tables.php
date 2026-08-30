@@ -40,6 +40,48 @@ return new class extends Migration
             });
         }
 
+        // Testbench 9+ bundles these as always-loaded default migrations, but
+        // testbench 8.x only ships them behind an opt-in #[WithMigration(...)]
+        // attribute we would rather not depend on. Creating them ourselves,
+        // guarded by hasTable(), works unconditionally across every version.
+        if (! Schema::hasTable('cache')) {
+            Schema::create('cache', function (Blueprint $table) {
+                $table->string('key')->primary();
+                $table->mediumText('value');
+                $table->integer('expiration');
+            });
+
+            Schema::create('cache_locks', function (Blueprint $table) {
+                $table->string('key')->primary();
+                $table->string('owner');
+                $table->integer('expiration');
+            });
+        }
+
+        if (! Schema::hasTable('jobs')) {
+            Schema::create('jobs', function (Blueprint $table) {
+                $table->id();
+                $table->string('queue')->index();
+                $table->longText('payload');
+                $table->unsignedTinyInteger('attempts');
+                $table->unsignedInteger('reserved_at')->nullable();
+                $table->unsignedInteger('available_at');
+                $table->unsignedInteger('created_at');
+            });
+        }
+
+        if (! Schema::hasTable('failed_jobs')) {
+            Schema::create('failed_jobs', function (Blueprint $table) {
+                $table->id();
+                $table->string('uuid')->unique();
+                $table->text('connection');
+                $table->text('queue');
+                $table->longText('payload');
+                $table->longText('exception');
+                $table->timestamp('failed_at')->useCurrent();
+            });
+        }
+
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tenant_id');
@@ -90,7 +132,10 @@ return new class extends Migration
 
     public function down(): void
     {
-        foreach (['unclassified_widgets', 'legacy_notes', 'plans', 'comments', 'posts'] as $table) {
+        foreach ([
+            'unclassified_widgets', 'legacy_notes', 'plans', 'comments', 'posts',
+            'failed_jobs', 'jobs', 'cache_locks', 'cache',
+        ] as $table) {
             Schema::dropIfExists($table);
         }
 
