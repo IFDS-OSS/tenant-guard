@@ -1,0 +1,32 @@
+providers:
+  - Ifds\TenantGuard\TenantGuardServiceProvider
+  - Workbench\App\Providers\WorkbenchServiceProvider
+
+migrations:
+  - workbench/database/migrations
+
+seeders:
+  - Workbench\Database\Seeders\DatabaseSeeder
+
+workbench:
+  start: '/posts'
+  install: true
+  health: false
+  discovers:
+    web: true
+    api: false
+    commands: false
+    components: false
+    views: false
+  build:
+    - asset-publish
+    - create-sqlite-db
+    - db-wipe
+  assets: []
+  sync: []
+
+env:
+  - APP_KEY="base64:P4nBGnpMOgJt0DIfvJ8w0hTL6zVK4d1IfrLkMH9gWEQ="
+  - DB_CONNECTION=sqlite
+  - CACHE_STORE=array
+  - QUEUE_CONNECTION=database
